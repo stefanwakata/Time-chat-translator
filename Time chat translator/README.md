@@ -74,4 +74,4 @@ This project demonstrates modern web development practices, real-time communicat
 **Stefan Olivier Wakata**  
 📧 stefanwakata55@gmail.com  
 🔗 [LinkedIn](https://www.linkedin.com/in/stefan-wakata-1610b6243/)  
-💼 [GitHub](https://github.com/yourusername)
+💼 [GitHub](https://github.com/stefanwakata)

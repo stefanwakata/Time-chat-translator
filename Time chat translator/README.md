@@ -27,10 +27,6 @@ npm run dev
 Time Chat Translator is a full-stack real-time chat application that breaks language barriers by providing automatic message translation. Users can communicate seamlessly in their preferred language while the system automatically translates messages in real-time, enabling truly global conversations.
 This project demonstrates modern web development practices, real-time communication architecture, and AI-powered translation services.
 
-## 🚀 Live Demo
-
-Visit the live application: [Time Chat Translator](https://your-app-url.lovable.app)
-
 ## Key Features
 
 **Real-Time Communication**

@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 210 100% 97%;
+    --foreground: 215 25% 27%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 27%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 27%;
+
+    --primary: 207 90% 54%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 207 90% 70%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 215 25% 27%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 262 83% 58%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 207 90% 54%;
+
+    --radius: 1rem;
+
+    --chat-bubble-sent: 207 90% 54%;
+    --chat-bubble-received: 0 0% 100%;
+    --chat-bubble-sent-text: 0 0% 100%;
+    --chat-bubble-received-text: 215 25% 27%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(207 90% 54%), hsl(262 83% 58%));
+    --gradient-hero: linear-gradient(135deg, hsl(207 90% 54%) 0%, hsl(262 83% 58%) 100%);
+    
+    --shadow-message: 0 2px 8px hsla(207, 90%, 54%, 0.08);
+    --shadow-card: 0 4px 16px hsla(207, 90%, 54%, 0.1);
+
+    /* Solid background for messages area */
+    --pattern-bg: hsl(var(--muted) / 0.3);
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 217 33% 17%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 217 33% 17%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 207 90% 54%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 207 90% 70%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 262 83% 58%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 207 90% 54%;
+
+    --chat-bubble-sent: 207 90% 54%;
+    --chat-bubble-received: 217 33% 17%;
+    --chat-bubble-sent-text: 0 0% 100%;
+    --chat-bubble-received-text: 210 40% 98%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(207 90% 54%), hsl(262 83% 58%));
+    --gradient-hero: linear-gradient(135deg, hsl(207 90% 54%) 0%, hsl(262 83% 58%) 100%);
+    
+    --shadow-message: 0 2px 8px hsla(207, 90%, 54%, 0.15);
+    --shadow-card: 0 4px 16px hsla(207, 90%, 54%, 0.2);
+
+    /* Solid background for messages area in dark mode */
+    --pattern-bg: hsl(var(--muted) / 0.2);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .chat-messages-container {
+    background-image: var(--pattern-bg);
+    background-repeat: repeat;
+  }
+}

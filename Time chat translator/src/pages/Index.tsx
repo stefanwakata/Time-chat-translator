@@ -53,7 +53,7 @@ const Index = () => {
       const response = await fetch(url);
       const result = await response.json();
 
-      const translatedText = result[0]?.map((item: any) => item[0]).join("") || content;
+      const translatedText = result[0]?.map((item: [string]) => item[0]).join("") || content;
       const detectedLang = result[2];
       const showTranslation = detectedLang !== targetLanguage && translatedText !== content;
 

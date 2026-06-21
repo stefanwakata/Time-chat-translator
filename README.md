@@ -1,77 +1,221 @@
-# Time Chat Translator
+# 🌍 Time Chat Translator
 
-A modern real-time chat application with automatic translation capabilities.
+![CI](https://github.com/stefanwakata/Time-chat-translator/actions/workflows/ci.yml/badge.svg)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Node](https://img.shields.io/badge/node-20-green.svg)
+![Docker](https://img.shields.io/badge/docker-ready-blue.svg)
 
+> A real-time multilingual chat platform. Users write in their native language — everyone reads in theirs. Instant. Automatic. Global.
 
-**Use your preferred IDE**
+---
 
-To test the project follow these steps:
+## ✨ Features
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- **Real-time messaging** via Supabase Realtime (WebSockets)
+- **Automatic translation** into 10 languages (EN, FR, ES, DE, IT, PT, RU, JA, ZH, AR)
+- **Toggle original/translated** message on click
+- **Multi-channel** organization (35+ topic channels)
+- **Secure authentication** — email/password via Supabase Auth
+- **Row-Level Security** on all database tables
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+---
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 🏗️ Architecture
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```mermaid
+graph TB
+    subgraph Client["Client — Azure Static Web Apps"]
+        UI["React 18 + TypeScript\nVite · Tailwind CSS · shadcn/ui"]
+    end
+
+    subgraph API["Backend API — Azure App Service"]
+        EXPRESS["Express.js\nRate limiting · Input validation · Logging"]
+        TRANSLATE["Translation Service\n(Google Translate proxy)"]
+        EXPRESS --> TRANSLATE
+    end
+
+    subgraph Supabase["Supabase (BaaS)"]
+        AUTH["Auth\n(email / password)"]
+        DB["PostgreSQL\nprofiles · channels · messages"]
+        RT["Realtime\nWebSocket subscriptions"]
+    end
+
+    subgraph CICD["CI/CD — GitHub Actions"]
+        CI["CI: Lint + Test + Build\n(on every PR)"]
+        CD["CD: Deploy to Azure\n(on merge to main)"]
+        CI --> CD
+    end
+
+    UI -- "HTTPS REST" --> EXPRESS
+    UI -- "Supabase JS SDK" --> AUTH
+    UI -- "Supabase JS SDK" --> DB
+    DB -- "postgres_changes" --> RT
+    RT -- "WebSocket" --> UI
 ```
-# **Time Chat Translator**
 
-## Project Overview
+---
 
-Time Chat Translator is a full-stack real-time chat application that breaks language barriers by providing automatic message translation. Users can communicate seamlessly in their preferred language while the system automatically translates messages in real-time, enabling truly global conversations.
-This project demonstrates modern web development practices, real-time communication architecture, and AI-powered translation services.
+## 🗄️ Database Schema
 
-## Key Features
+```
+auth.users (Supabase managed)
+    │
+    ├── profiles    (id, username, avatar_url, status, last_seen)
+    │
+    ├── channels    (id, name, description, created_by → profiles)
+    │
+    └── messages    (id, content, user_id → auth.users, channel_id → channels)
+```
 
-**Real-Time Communication**
-* Instant message delivery using WebSocket connections
-* Live typing indicators and presence detection
-* Message history persistence
+All tables use **Row-Level Security (RLS)** — users can only read/write their own data.
 
-**Multilingual Support**
-* Automatic message translation to user's preferred language
-* Support for 10+ major languages (English, French, Spanish, German, Portuguese, Arabic, Chinese, Japanese, Russian, Hindi)
-* Original message preservation with translation overlay
+---
 
-**User Management**
-* Secure authentication system with email/password
-* User profiles with customizable settings
-* Session management and authorization
+## 🚀 Getting Started
 
-**Channel System**
-* Create and join multiple chat channels
-* Topic-based conversation organization
-* Real-time channel updates
+### Prerequisites
 
-## Technology Stack
+- Node.js 20+
+- Docker & Docker Compose
+- A [Supabase](https://supabase.com) project
 
-**Frontend**
-* React 18 with TypeScript for type-safe component development
-* Vite for lightning-fast build and development
-* Tailwind CSS for responsive, modern UI design
-* Shadcn/ui for accessible, customizable components
-* React Router for seamless navigation
+### 1. Clone the repo
 
-**Backend & Infrastructure**
-* Supabase for backend services (PostgreSQL database)
-* Real-time subscriptions for live updates
-* Edge Functions for serverless translation logic
-* Row-Level Security (RLS) for data protection
+```bash
+git clone https://github.com/stefanwakata/Time-chat-translator.git
+cd Time-chat-translator
+```
 
-**AI & Translation**
-* AI-powered translation engine
-* Context-aware language detection
-* Optimized for low latency
+### 2. Configure environment variables
 
-## Contact
+```bash
+cp .env.example .env
+# Fill in your Supabase credentials
+```
 
-**Stefan Olivier Wakata**  
-📧 stefanwakata55@gmail.com  
-🔗 [LinkedIn](https://www.linkedin.com/in/stefan-wakata-1610b6243/)  
-💼 [GitHub](https://github.com/stefanwakata)
+`.env.example`:
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
+VITE_API_URL=http://localhost:3001
+SUPABASE_SERVICE_KEY=eyJ...
+```
+
+### 3a. Run with Docker (recommended)
+
+```bash
+docker compose up --build
+```
+
+- Frontend → http://localhost:8080
+- Backend API → http://localhost:3001/health
+
+### 3b. Run locally (development)
+
+```bash
+# Terminal 1 — Frontend
+cd "Time chat translator"
+npm install && npm run dev
+
+# Terminal 2 — Backend API
+cd backend
+npm install && npm run dev
+```
+
+---
+
+## 🧪 Tests
+
+```bash
+# Frontend — Vitest + React Testing Library
+cd "Time chat translator"
+npm run test:ci
+
+# Backend — Vitest + Supertest
+cd backend
+npm run test:ci
+```
+
+---
+
+## 🔬 CI/CD Pipeline
+
+Every pull request triggers:
+
+1. **ESLint** — static analysis on frontend & backend
+2. **Vitest** — unit + integration tests with coverage
+3. **TypeScript** — strict type checking
+4. **Docker** — validates the multi-stage image builds
+
+On merge to `main`:
+
+5. **Azure Static Web Apps** — frontend deployed automatically
+6. **Azure App Service** — backend deployed automatically
+
+---
+
+## 🔐 Security
+
+- Secrets managed via **GitHub Actions Secrets** and `.env` (never committed)
+- **Helmet.js** — hardened HTTP response headers
+- **Rate limiting** — 100 req/15min globally, 30 req/min on translation
+- **Zod** — input validation on all API endpoints
+- **CORS** — restricted to known origins
+- **Docker** — containers run as non-root user
+
+---
+
+## 🗂️ Project Structure
+
+```
+Time-chat-translator/
+├── Time chat translator/       # React frontend (Vite + TypeScript)
+│   ├── src/
+│   │   ├── components/         # UI components (MessageBubble, ChatHeader…)
+│   │   ├── pages/              # Route pages
+│   │   ├── integrations/       # Supabase client & generated types
+│   │   └── __tests__/          # Vitest component tests
+│   ├── Dockerfile              # Multi-stage build → nginx
+│   ├── nginx.conf              # Production nginx config
+│   └── vitest.config.ts
+│
+├── backend/                    # Express.js API (TypeScript)
+│   ├── src/
+│   │   ├── routes/             # /api/translate
+│   │   ├── middleware/         # Rate limiter, Winston logger
+│   │   └── __tests__/          # Supertest integration tests
+│   └── Dockerfile              # Multi-stage build → non-root Node
+│
+├── .github/workflows/
+│   ├── ci.yml                  # CI: lint + test + build
+│   └── cd-azure.yml            # CD: deploy to Azure on main
+│
+├── docker-compose.yml          # Local full-stack development
+└── README.md
+```
+
+---
+
+## 🌐 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, TypeScript, Vite, Tailwind CSS, shadcn/ui |
+| Backend | Node.js 20, Express.js, TypeScript |
+| Database | PostgreSQL (via Supabase) |
+| Auth | Supabase Auth |
+| Realtime | Supabase Realtime (WebSockets) |
+| Translation | Google Translate API (proxied & rate-limited via backend) |
+| Testing | Vitest, React Testing Library, Supertest |
+| CI/CD | GitHub Actions |
+| Cloud | Azure Static Web Apps + Azure App Service |
+| Containers | Docker (multi-stage), nginx |
+
+---
+
+## 👤 Author
+
+**Stefan Olivier Wakata**
+- GitHub: [@stefanwakata](https://github.com/stefanwakata)
+- LinkedIn: [Stefan Wakata](https://www.linkedin.com/in/stefan-wakata-1610b6243/)
+- Email: stefanwakata45@gmail.com

@@ -29,6 +29,8 @@ interface Channel {
   description: string | null;
 }
 
+const GROUPING_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
+
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -51,11 +53,8 @@ const Index = () => {
       const response = await fetch(url);
       const result = await response.json();
 
-      // Google Translate response: [[[translatedText, originalText, ...], ...], null, detectedLang]
       const translatedText = result[0]?.map((item: any) => item[0]).join("") || content;
       const detectedLang = result[2];
-
-      // Ne montrer la traduction que si la langue source est différente de la cible
       const showTranslation = detectedLang !== targetLanguage && translatedText !== content;
 
       setMessages((current) =>
@@ -80,28 +79,22 @@ const Index = () => {
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-        if (!session) {
-          navigate("/auth");
-        }
+        if (!session) navigate("/auth");
       }
     );
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      if (!session) {
-        navigate("/auth");
-      }
+      if (!session) navigate("/auth");
       setLoading(false);
     });
 
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  // Translate all messages when language changes
   useEffect(() => {
     if (!messages.length) return;
-
     messages.forEach((message) => {
       setMessages((current) =>
         current.map((msg) =>
@@ -122,11 +115,7 @@ const Index = () => {
         .order("created_at", { ascending: true });
 
       if (error) {
-        toast({
-          title: "Error loading channels",
-          description: error.message,
-          variant: "destructive",
-        });
+        toast({ title: "Error loading channels", description: error.message, variant: "destructive" });
         return;
       }
 
@@ -140,22 +129,12 @@ const Index = () => {
 
     const channelSubscription = supabase
       .channel("channels")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "channels",
-        },
-        () => {
-          fetchChannels();
-        }
-      )
+      .on("postgres_changes", { event: "*", schema: "public", table: "channels" }, () => {
+        fetchChannels();
+      })
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(channelSubscription);
-    };
+    return () => { supabase.removeChannel(channelSubscription); };
   }, [user, toast, activeChannelId]);
 
   useEffect(() => {
@@ -169,11 +148,7 @@ const Index = () => {
         .order("created_at", { ascending: true });
 
       if (messagesError) {
-        toast({
-          title: "Error loading messages",
-          description: messagesError.message,
-          variant: "destructive",
-        });
+        toast({ title: "Error loading messages", description: messagesError.message, variant: "destructive" });
         return;
       }
 
@@ -182,18 +157,11 @@ const Index = () => {
         .select("id, username");
 
       if (profilesError) {
-        toast({
-          title: "Error loading profiles",
-          description: profilesError.message,
-          variant: "destructive",
-        });
+        toast({ title: "Error loading profiles", description: profilesError.message, variant: "destructive" });
         return;
       }
 
-      const profilesMap = new Map(
-        profilesData?.map((p) => [p.id, { username: p.username }]) || []
-      );
-
+      const profilesMap = new Map(profilesData?.map((p) => [p.id, { username: p.username }]) || []);
       const enrichedMessages = messagesData?.map((msg) => ({
         ...msg,
         profile: profilesMap.get(msg.user_id),
@@ -209,12 +177,7 @@ const Index = () => {
       .channel(`messages-${activeChannelId}`)
       .on(
         "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "messages",
-          filter: `channel_id=eq.${activeChannelId}`,
-        },
+        { event: "INSERT", schema: "public", table: "messages", filter: `channel_id=eq.${activeChannelId}` },
         async (payload) => {
           const { data: profile } = await supabase
             .from("profiles")
@@ -239,9 +202,7 @@ const Index = () => {
       )
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, [user, toast, activeChannelId]);
 
   const handleSendMessage = async (content: string) => {
@@ -254,39 +215,37 @@ const Index = () => {
     });
 
     if (error) {
-      toast({
-        title: "Error sending message",
-        description: error.message,
-        variant: "destructive",
-      });
+      toast({ title: "Error sending message", description: error.message, variant: "destructive" });
     }
   };
 
   const handleChannelCreated = async () => {
-    const { data } = await supabase
-      .from("channels")
-      .select("*")
-      .order("created_at", { ascending: true });
+    const { data } = await supabase.from("channels").select("*").order("created_at", { ascending: true });
+    if (data) setChannels(data);
+  };
 
-    if (data) {
-      setChannels(data);
-    }
+  // Determine if a message is "grouped" (same user, within 5 min of previous)
+  const isGrouped = (index: number): boolean => {
+    if (index === 0) return false;
+    const current = messages[index];
+    const previous = messages[index - 1];
+    if (current.user_id !== previous.user_id) return false;
+    const timeDiff = new Date(current.created_at).getTime() - new Date(previous.created_at).getTime();
+    return timeDiff < GROUPING_THRESHOLD_MS;
   };
 
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="text-muted-foreground">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto" />
+          <p style={{ color: 'hsl(220 5% 55%)' }}>Chargement...</p>
         </div>
       </div>
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   const activeChannel = channels.find((ch) => ch.id === activeChannelId);
 
@@ -295,6 +254,8 @@ const Index = () => {
       <ChatHeader
         selectedLanguage={selectedLanguage}
         onLanguageChange={setSelectedLanguage}
+        channelName={activeChannel?.name}
+        channelDescription={activeChannel?.description ?? undefined}
       />
       <main className="flex-1 overflow-hidden flex">
         <ChannelList
@@ -303,33 +264,22 @@ const Index = () => {
           onChannelSelect={setActiveChannelId}
           onChannelCreated={handleChannelCreated}
         />
-        <div className="flex-1 flex flex-col">
-          {activeChannel && (
-            <div className="px-6 py-4 border-b border-border bg-card">
-              <div className="flex items-center gap-2">
-                <span className="text-xl font-semibold text-foreground">
-                  #{activeChannel.name}
-                </span>
-              </div>
-              {activeChannel.description && (
-                <p className="text-sm text-muted-foreground mt-1">
-                  {activeChannel.description}
-                </p>
-              )}
-            </div>
-          )}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 chat-messages-container">
+
+        {/* Main chat area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto py-4">
             {messages.length === 0 ? (
-              <div className="flex items-center justify-center h-full text-center animate-fade-in">
+              <div className="flex items-center justify-center h-full text-center">
                 <div className="space-y-2">
-                  <p className="text-lg font-medium text-foreground">No messages yet</p>
-                  <p className="text-sm text-muted-foreground">
-                    Be the first to say hello in #{activeChannel?.name}!
+                  <p className="text-lg font-semibold text-white">Aucun message</p>
+                  <p className="text-sm" style={{ color: 'hsl(220 5% 47%)' }}>
+                    Sois le premier à dire bonjour dans #{activeChannel?.name} !
                   </p>
                 </div>
               </div>
             ) : (
-              messages.map((message) => (
+              messages.map((message, index) => (
                 <MessageBubble
                   key={message.id}
                   content={message.content}
@@ -338,14 +288,18 @@ const Index = () => {
                   isOwnMessage={message.user_id === user.id}
                   translatedContent={message.translatedContent}
                   isTranslating={message.isTranslating}
+                  isGrouped={isGrouped(index)}
                 />
               ))
             )}
             <div ref={messagesEndRef} />
           </div>
+
+          {/* Input */}
           <MessageInput
             onSendMessage={handleSendMessage}
             disabled={!activeChannelId}
+            channelName={activeChannel?.name}
           />
         </div>
       </main>

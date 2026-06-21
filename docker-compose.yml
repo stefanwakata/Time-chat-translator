@@ -4,7 +4,7 @@ services:
   # ─── Frontend ───────────────────────────────────────────────────────────────
   frontend:
     build:
-      context: "./Time chat translator"
+      context: "./frontend"
       dockerfile: Dockerfile
       args:
         VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}

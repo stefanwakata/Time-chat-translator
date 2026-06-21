@@ -19,7 +19,7 @@ jobs:
           node-version: "24"
 
       - name: Install & Build
-        working-directory: "Time chat translator"
+        working-directory: "frontend"
         run: |
           npm install
           npm run build
@@ -34,7 +34,7 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
-          app_location: "Time chat translator"
+          app_location: "frontend"
           output_location: dist
 
   deploy-backend:

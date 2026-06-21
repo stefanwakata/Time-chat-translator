@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: "Time chat translator"
+        working-directory: "frontend"
 
     steps:
       - uses: actions/checkout@v4
@@ -43,7 +43,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frontend-dist
-          path: "Time chat translator/dist"
+          path: "frontend/dist"
           retention-days: 1
 
   # ─── Backend ────────────────────────────────────────────────────────────────
@@ -87,7 +87,7 @@ jobs:
         run: |
           docker build \
             -t time-chat-translator-frontend:${{ github.sha }} \
-            "Time chat translator"
+            "frontend"
 
       - name: Build backend image
         run: |

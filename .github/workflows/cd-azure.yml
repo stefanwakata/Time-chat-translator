@@ -16,14 +16,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: npm
-          cache-dependency-path: "Time chat translator/package-lock.json"
+          node-version: "24"
 
       - name: Install & Build
         working-directory: "Time chat translator"
         run: |
-          npm ci
+          npm install
           npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
@@ -50,12 +48,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
 
       - name: Build backend
         working-directory: backend
         run: |
-          npm ci
+          npm install
           npm run build
 
       - name: Login to Azure

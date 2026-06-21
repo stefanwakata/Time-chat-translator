@@ -46,8 +46,8 @@ translateRouter.post("/", translateRateLimiter, async (req: Request, res: Respon
       throw new Error(`Translation service returned ${response.status}`);
     }
 
-    const data = await response.json();
-    const translatedText = (data[0] as [string, string][])
+    const data = await response.json() as [[string, string][], unknown, string];
+    const translatedText = data[0]
       ?.map(([chunk]) => chunk)
       .join("") ?? text;
     const detectedLanguage: string = data[2] ?? "unknown";

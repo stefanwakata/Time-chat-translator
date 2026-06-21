@@ -46,27 +46,22 @@ const Index = () => {
   };
 
   const translateMessage = async (messageId: string, content: string, targetLanguage: string) => {
-    if (targetLanguage === "en") {
-      // No translation needed for English
-      setMessages((current) =>
-        current.map((msg) =>
-          msg.id === messageId ? { ...msg, translatedContent: undefined, isTranslating: false } : msg
-        )
-      );
-      return;
-    }
-
     try {
-      const { data, error } = await supabase.functions.invoke("translate", {
-        body: { text: content, targetLanguage },
-      });
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLanguage}&dt=t&q=${encodeURIComponent(content)}`;
+      const response = await fetch(url);
+      const result = await response.json();
 
-      if (error) throw error;
+      // Google Translate response: [[[translatedText, originalText, ...], ...], null, detectedLang]
+      const translatedText = result[0]?.map((item: any) => item[0]).join("") || content;
+      const detectedLang = result[2];
+
+      // Ne montrer la traduction que si la langue source est différente de la cible
+      const showTranslation = detectedLang !== targetLanguage && translatedText !== content;
 
       setMessages((current) =>
         current.map((msg) =>
           msg.id === messageId
-            ? { ...msg, translatedContent: data.translation, isTranslating: false }
+            ? { ...msg, translatedContent: showTranslation ? translatedText : undefined, isTranslating: false }
             : msg
         )
       );
@@ -108,7 +103,6 @@ const Index = () => {
     if (!messages.length) return;
 
     messages.forEach((message) => {
-      // Translate ALL messages for testing purposes
       setMessages((current) =>
         current.map((msg) =>
           msg.id === message.id ? { ...msg, isTranslating: true } : msg
@@ -239,10 +233,7 @@ const Index = () => {
           };
 
           setMessages((current) => [...current, newMessage]);
-          
-          // Auto-translate ALL incoming messages for testing
           translateMessage(newMessage.id, newMessage.content, selectedLanguage);
-          
           setTimeout(scrollToBottom, 100);
         }
       )
@@ -301,7 +292,7 @@ const Index = () => {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <ChatHeader 
+      <ChatHeader
         selectedLanguage={selectedLanguage}
         onLanguageChange={setSelectedLanguage}
       />

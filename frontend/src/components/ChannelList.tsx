@@ -1,7 +1,20 @@
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Hash, Plus, Zap } from "lucide-react";
+import { Plus, Zap } from "lucide-react";
 import CreateChannelDialog from "./CreateChannelDialog";
+
+const CHANNEL_EMOJIS: Record<string, string> = {
+  general: "💬", tech: "💻", gaming: "🎮", music: "🎵", movies: "🎬",
+  sports: "⚽", food: "🍕", travel: "✈️", fashion: "👗", science: "🔬",
+  art: "🎨", books: "📚", news: "📰", crypto: "₿", fitness: "💪",
+  photography: "📷", cooking: "👨‍🍳", anime: "⛩️", cars: "🚗", nature: "🌿",
+  memes: "😂", design: "✏️", finance: "💰", health: "❤️", pets: "🐾",
+  space: "🚀", history: "📜", language: "🗣️", politics: "🏛️", random: "🎲",
+  philosophy: "🧠", diy: "🔧", environment: "🌍", relationships: "💑", career: "💼",
+};
+
+const getChannelEmoji = (name: string): string =>
+  CHANNEL_EMOJIS[name.toLowerCase()] ?? "💬";
 
 interface Channel {
   id: string;
@@ -79,9 +92,9 @@ const ChannelList = ({ channels, activeChannelId, onChannelSelect, onChannelCrea
                   if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
                 }}
               >
-                <Hash className={`h-3.5 w-3.5 flex-shrink-0 transition-colors ${
-                  isActive ? 'text-cyan-400' : 'text-muted-foreground group-hover:text-purple-400'
-                }`} />
+                <span className="flex-shrink-0 text-base leading-none">
+                  {getChannelEmoji(channel.name)}
+                </span>
                 <span className="truncate">{channel.name}</span>
                 {isActive && (
                   <span className="ml-auto w-1.5 h-1.5 rounded-full flex-shrink-0"

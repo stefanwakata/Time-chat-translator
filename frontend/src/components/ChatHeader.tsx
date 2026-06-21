@@ -1,4 +1,16 @@
-import { LogOut, Hash, Globe } from "lucide-react";
+import { LogOut, Globe } from "lucide-react";
+
+const CHANNEL_EMOJIS: Record<string, string> = {
+  general: "💬", tech: "💻", gaming: "🎮", music: "🎵", movies: "🎬",
+  sports: "⚽", food: "🍕", travel: "✈️", fashion: "👗", science: "🔬",
+  art: "🎨", books: "📚", news: "📰", crypto: "₿", fitness: "💪",
+  photography: "📷", cooking: "👨‍🍳", anime: "⛩️", cars: "🚗", nature: "🌿",
+  memes: "😂", design: "✏️", finance: "💰", health: "❤️", pets: "🐾",
+  space: "🚀", history: "📜", language: "🗣️", politics: "🏛️", random: "🎲",
+  philosophy: "🧠", diy: "🔧", environment: "🌍", relationships: "💑", career: "💼",
+};
+const getChannelEmoji = (name?: string): string =>
+  name ? (CHANNEL_EMOJIS[name.toLowerCase()] ?? "💬") : "💬";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -32,9 +44,9 @@ const ChatHeader = ({ selectedLanguage, onLanguageChange, channelName, channelDe
 
       {/* Left */}
       <div className="flex items-center gap-2.5 flex-1 min-w-0">
-        <div className="flex items-center justify-center w-7 h-7 rounded-lg"
+        <div className="flex items-center justify-center w-7 h-7 rounded-lg text-base"
           style={{ background: 'rgba(139,92,246,0.2)', border: '1px solid rgba(139,92,246,0.3)' }}>
-          <Hash className="h-3.5 w-3.5" style={{ color: '#a78bfa' }} />
+          {getChannelEmoji(channelName)}
         </div>
         <span className="font-bold text-white/90 truncate">{channelName || 'general'}</span>
         {channelDescription && (

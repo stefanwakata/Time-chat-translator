@@ -19,7 +19,7 @@ const AVATAR_GRADIENTS = [
   'linear-gradient(135deg, #43e97b, #38f9d7)',
   'linear-gradient(135deg, #fa709a, #fee140)',
   'linear-gradient(135deg, #a18cd1, #fbc2eb)',
-  'linear-gradient(135deg, #fccb90, #d57eeb)',
+  'linear-gradient(135deg, #7c3aed, #06b6d4)',
   'linear-gradient(135deg, #a1c4fd, #c2e9fb)',
   'linear-gradient(135deg, #fd7043, #ff8a65)',
   'linear-gradient(135deg, #26c6da, #00acc1)',
@@ -49,28 +49,28 @@ const MessageBubble = ({
 
   const bubble = (
     <div
-      className={`relative max-w-[75%] px-4 py-2.5 rounded-2xl shadow-sm transition-all ${
-        isOwnMessage
-          ? 'rounded-br-sm text-white'
-          : 'rounded-bl-sm bg-white border border-border/60 text-foreground'
+      className={`relative max-w-[75%] px-4 py-3 rounded-2xl transition-all duration-200 ${
+        isOwnMessage ? 'rounded-br-sm text-white' : 'rounded-bl-sm'
       }`}
-      style={isOwnMessage ? { background: 'linear-gradient(135deg, hsl(207 90% 54%), hsl(262 83% 58%))' } : {}}
+      style={isOwnMessage ? {
+        background: 'linear-gradient(135deg, rgba(124,58,237,0.85), rgba(6,182,212,0.7))',
+        boxShadow: '0 4px 20px rgba(139,92,246,0.35), 0 0 0 1px rgba(139,92,246,0.3)',
+      } : {
+        background: 'rgba(255,255,255,0.06)',
+        border: '1px solid rgba(255,255,255,0.1)',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
+        backdropFilter: 'blur(8px)',
+        color: 'rgba(255,255,255,0.88)',
+      }}
     >
       {isTranslating ? (
         <div className="flex items-center gap-2">
           <div className="flex gap-1">
-            {[0, 1, 2].map((i) => (
-              <span
-                key={i}
-                className="w-1.5 h-1.5 rounded-full opacity-60 animate-bounce"
-                style={{
-                  background: isOwnMessage ? 'white' : 'hsl(262 83% 58%)',
-                  animationDelay: `${i * 0.15}s`,
-                }}
-              />
-            ))}
+            <span className="bounce-dot" />
+            <span className="bounce-dot" />
+            <span className="bounce-dot" />
           </div>
-          <span className="text-xs opacity-60">Traduction...</span>
+          <span className="text-xs opacity-50">Traduction...</span>
         </div>
       ) : (
         <>
@@ -78,11 +78,12 @@ const MessageBubble = ({
           {hasTranslation && (
             <button
               onClick={() => setShowOriginal(!showOriginal)}
-              className={`text-[11px] mt-1 flex items-center gap-1 transition-opacity hover:opacity-100 opacity-60 ${
-                isOwnMessage ? 'text-white' : 'text-primary'
-              }`}
+              className="text-[11px] mt-1.5 flex items-center gap-1 transition-all hover:opacity-100 opacity-50"
+              style={{ color: isOwnMessage ? 'rgba(255,255,255,0.8)' : '#a78bfa' }}
             >
-              🌍 {showOriginal ? 'Voir la traduction' : `Original : ${content.slice(0, 40)}${content.length > 40 ? '…' : ''}`}
+              🌍 {showOriginal
+                ? 'Voir traduction'
+                : `Original: ${content.slice(0, 40)}${content.length > 40 ? '…' : ''}`}
             </button>
           )}
         </>
@@ -100,8 +101,9 @@ const MessageBubble = ({
   }
 
   return (
-    <div className={`flex gap-3 px-4 pt-3 pb-0.5 message-in ${isOwnMessage ? 'flex-row-reverse' : ''}`}>
-      <Avatar className="h-9 w-9 flex-shrink-0 ring-2 ring-white shadow-sm">
+    <div className={`flex gap-3 px-4 pt-4 pb-0.5 message-in ${isOwnMessage ? 'flex-row-reverse' : ''}`}>
+      <Avatar className="h-9 w-9 flex-shrink-0"
+        style={{ boxShadow: '0 0 12px rgba(139,92,246,0.4)' }}>
         <AvatarFallback
           className="text-white font-bold text-sm"
           style={{ background: gradient }}
@@ -109,10 +111,10 @@ const MessageBubble = ({
           {username.charAt(0).toUpperCase()}
         </AvatarFallback>
       </Avatar>
-      <div className={`flex flex-col gap-0.5 ${isOwnMessage ? 'items-end' : 'items-start'}`}>
+      <div className={`flex flex-col gap-1 ${isOwnMessage ? 'items-end' : 'items-start'}`}>
         <div className={`flex items-center gap-2 px-1 ${isOwnMessage ? 'flex-row-reverse' : ''}`}>
-          <span className="text-xs font-semibold text-foreground">{username}</span>
-          <span className="text-[10px] text-muted-foreground">
+          <span className="text-xs font-semibold" style={{ color: '#a78bfa' }}>{username}</span>
+          <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
             {format(new Date(timestamp), "HH:mm")}
           </span>
         </div>

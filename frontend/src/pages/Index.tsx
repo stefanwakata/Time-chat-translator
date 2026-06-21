@@ -7,6 +7,7 @@ import MessageBubble from "@/components/MessageBubble";
 import MessageInput from "@/components/MessageInput";
 import ChatHeader from "@/components/ChatHeader";
 import ChannelList from "@/components/ChannelList";
+import AnimatedBackground from "@/components/AnimatedBackground";
 
 interface Profile {
   username: string;
@@ -236,10 +237,12 @@ const Index = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto" />
-          <p style={{ color: 'hsl(220 5% 55%)' }}>Chargement...</p>
+      <div className="flex min-h-screen items-center justify-center bg-background relative">
+        <AnimatedBackground />
+        <div className="text-center space-y-4 relative z-10">
+          <div className="w-12 h-12 rounded-full mx-auto animate-spin"
+            style={{ border: '2px solid rgba(139,92,246,0.2)', borderTop: '2px solid #a78bfa' }} />
+          <p className="gradient-brand-text font-semibold">Chargement...</p>
         </div>
       </div>
     );
@@ -250,14 +253,15 @@ const Index = () => {
   const activeChannel = channels.find((ch) => ch.id === activeChannelId);
 
   return (
-    <div className="flex flex-col h-screen bg-background">
+    <div className="flex flex-col h-screen bg-background relative">
+      <AnimatedBackground />
       <ChatHeader
         selectedLanguage={selectedLanguage}
         onLanguageChange={setSelectedLanguage}
         channelName={activeChannel?.name}
         channelDescription={activeChannel?.description ?? undefined}
       />
-      <main className="flex-1 overflow-hidden flex">
+      <main className="flex-1 overflow-hidden flex relative z-10">
         <ChannelList
           channels={channels}
           activeChannelId={activeChannelId}
@@ -268,7 +272,7 @@ const Index = () => {
         {/* Main chat area */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto py-4">
+          <div className="flex-1 overflow-y-auto py-4" style={{ background: 'rgba(5,5,20,0.4)' }}>
             {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full text-center">
                 <div className="space-y-2">

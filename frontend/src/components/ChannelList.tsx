@@ -4,13 +4,18 @@ import { Plus, Zap } from "lucide-react";
 import CreateChannelDialog from "./CreateChannelDialog";
 
 const CHANNEL_EMOJIS: Record<string, string> = {
-  general: "💬", tech: "💻", gaming: "🎮", music: "🎵", movies: "🎬",
-  sports: "⚽", food: "🍕", travel: "✈️", fashion: "👗", science: "🔬",
-  art: "🎨", books: "📚", news: "📰", crypto: "₿", fitness: "💪",
-  photography: "📷", cooking: "👨‍🍳", anime: "⛩️", cars: "🚗", nature: "🌿",
-  memes: "😂", design: "✏️", finance: "💰", health: "❤️", pets: "🐾",
-  space: "🚀", history: "📜", language: "🗣️", politics: "🏛️", random: "🎲",
-  philosophy: "🧠", diy: "🔧", environment: "🌍", relationships: "💑", career: "💼",
+  // French channel names
+  general: "💬", introductions: "👋", annonces: "📢", "off-topic": "🎲",
+  football: "⚽", basketball: "🏀", tennis: "🎾", f1: "🏎️", rugby: "🏉",
+  "sport-us": "🏈", esport: "🖥️", gaming: "🎮", fps: "🎯", rpg: "⚔️",
+  minecraft: "⛏️", "fifa-eafc": "🎮", cinema: "🎬", series: "📺",
+  anime: "⛩️", musique: "🎵", livres: "📚", podcasts: "🎙️", food: "🍕",
+  voyage: "✈️", mode: "👗", fitness: "💪", sante: "❤️", technologie: "💻",
+  programmation: "👨‍💻", ia: "🤖", science: "🔬", crypto: "₿", finance: "💰",
+  "apprendre-langues": "🗣️", art: "🎨", memes: "😂", debats: "🏛️", aide: "🆘",
+  // English fallbacks
+  tech: "💻", music: "🎵", movies: "🎬", sports: "⚽", travel: "✈️",
+  fashion: "👗", books: "📚", news: "📰", health: "❤️", random: "🎲",
 };
 
 const getChannelEmoji = (name: string): string =>

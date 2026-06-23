@@ -5,7 +5,7 @@
 ![Node](https://img.shields.io/badge/node-20-green.svg)
 ![Docker](https://img.shields.io/badge/docker-ready-blue.svg)
 
-> A real-time multilingual chat platform. Users write in their native language — everyone reads in theirs. Instant. Automatic. Global.
+> A real-time multilingual chat platform. Users write in their native language but everyone reads in theirs. Instant. Automatic. Global.
 
 ---
 
@@ -15,7 +15,7 @@
 - **Automatic translation** into 10 languages (EN, FR, ES, DE, IT, PT, RU, JA, ZH, AR)
 - **Toggle original/translated** message on click
 - **Multi-channel** organization (35+ topic channels)
-- **Secure authentication** — email/password via Supabase Auth
+- **Secure authentication** via email/password via Supabase Auth
 - **Row-Level Security** on all database tables
 
 ---
@@ -67,101 +67,35 @@ auth.users (Supabase managed)
     └── messages    (id, content, user_id → auth.users, channel_id → channels)
 ```
 
-All tables use **Row-Level Security (RLS)** — users can only read/write their own data.
+All tables use **Row-Level Security (RLS)** and users can only read/write their own data.
 
 ---
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js 20+
-- Docker & Docker Compose
-- A [Supabase](https://supabase.com) project
-
-### 1. Clone the repo
-
-```bash
-git clone https://github.com/stefanwakata/Time-chat-translator.git
-cd Time-chat-translator
-```
-
-### 2. Configure environment variables
-
-```bash
-cp .env.example .env
-# Fill in your Supabase credentials
-```
-
-`.env.example`:
-```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
-VITE_API_URL=http://localhost:3001
-SUPABASE_SERVICE_KEY=eyJ...
-```
-
-### 3a. Run with Docker (recommended)
-
-```bash
-docker compose up --build
-```
-
-- Frontend → http://localhost:8080
-- Backend API → http://localhost:3001/health
-
-### 3b. Run locally (development)
-
-```bash
-# Terminal 1 — Frontend
-cd frontend
-npm install && npm run dev
-
-# Terminal 2 — Backend API
-cd backend
-npm install && npm run dev
-```
-
----
-
-## 🧪 Tests
-
-```bash
-# Frontend — Vitest + React Testing Library
-cd frontend
-npm run test:ci
-
-# Backend — Vitest + Supertest
-cd backend
-npm run test:ci
-```
-
----
 
 ## 🔬 CI/CD Pipeline
 
 Every pull request triggers:
 
-1. **ESLint** — static analysis on frontend & backend
-2. **Vitest** — unit + integration tests with coverage
-3. **TypeScript** — strict type checking
-4. **Docker** — validates the multi-stage image builds
+1. **ESLint** : static analysis on frontend & backend
+2. **Vitest** : unit + integration tests with coverage
+3. **TypeScript** : strict type checking
+4. **Docker** : validates the multi-stage image builds
 
 On merge to `main`:
 
-5. **Azure Static Web Apps** — frontend deployed automatically
-6. **Azure App Service** — backend deployed automatically
+5. **Azure Static Web Apps** : frontend deployed automatically
+6. **Azure App Service** : backend deployed automatically
 
 ---
 
 ## 🔐 Security
 
 - Secrets managed via **GitHub Actions Secrets** and `.env` (never committed)
-- **Helmet.js** — hardened HTTP response headers
-- **Rate limiting** — 100 req/15min globally, 30 req/min on translation
-- **Zod** — input validation on all API endpoints
-- **CORS** — restricted to known origins
-- **Docker** — containers run as non-root user
+- **Helmet.js** : hardened HTTP response headers
+- **Rate limiting** : 100 req/15min globally, 30 req/min on translation
+- **Zod** : input validation on all API endpoints
+- **CORS** : restricted to known origins
+- **Docker** : containers run as non-root user
 
 ---
 
@@ -179,9 +113,9 @@ Time-chat-translator/
 │   ├── nginx.conf              # Production nginx config
 │   └── vitest.config.ts
 │
-├── backend/                    # Express.js API (TypeScript)
+├── backend/                    # Express.js API
 │   ├── src/
-│   │   ├── routes/             # /api/translate
+│   │   ├── routes/             # api/translate
 │   │   ├── middleware/         # Rate limiter, Winston logger
 │   │   └── __tests__/          # Supertest integration tests
 │   └── Dockerfile              # Multi-stage build → non-root Node

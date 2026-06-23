@@ -114,7 +114,7 @@ docker compose up --build
 
 ```bash
 # Terminal 1 — Frontend
-cd "Time chat translator"
+cd frontend
 npm install && npm run dev
 
 # Terminal 2 — Backend API
@@ -128,7 +128,7 @@ npm install && npm run dev
 
 ```bash
 # Frontend — Vitest + React Testing Library
-cd "Time chat translator"
+cd frontend
 npm run test:ci
 
 # Backend — Vitest + Supertest
@@ -169,7 +169,7 @@ On merge to `main`:
 
 ```
 Time-chat-translator/
-├── Time chat translator/       # React frontend (Vite + TypeScript)
+├── frontend/                   # React frontend (Vite + TypeScript)
 │   ├── src/
 │   │   ├── components/         # UI components (MessageBubble, ChatHeader…)
 │   │   ├── pages/              # Route pages

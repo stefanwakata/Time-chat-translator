@@ -1,4 +1,8 @@
 import { LogOut, Globe } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import LanguageSelector from "./LanguageSelector";
 
 const CHANNEL_EMOJIS: Record<string, string> = {
   general: "💬", introductions: "👋", annonces: "📢", "off-topic": "🎲",
@@ -9,15 +13,9 @@ const CHANNEL_EMOJIS: Record<string, string> = {
   voyage: "✈️", mode: "👗", fitness: "💪", sante: "❤️", technologie: "💻",
   programmation: "👨‍💻", ia: "🤖", science: "🔬", crypto: "₿", finance: "💰",
   "apprendre-langues": "🗣️", art: "🎨", memes: "😂", debats: "🏛️", aide: "🆘",
-  tech: "💻", music: "🎵", movies: "🎬", sports: "⚽", travel: "✈️",
-  fashion: "👗", books: "📚", news: "📰", health: "❤️", random: "🎲",
 };
 const getChannelEmoji = (name?: string): string =>
   name ? (CHANNEL_EMOJIS[name.toLowerCase()] ?? "💬") : "💬";
-import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import LanguageSelector from "./LanguageSelector";
 
 interface ChatHeaderProps {
   selectedLanguage: string;

@@ -90,7 +90,7 @@ On merge to `main`:
 
 ## 🔐 Security
 
-- Secrets managed via **GitHub Actions Secrets** and `.env` (never committed)
+- Secrets managed via **GitHub Actions Secrets** and `.env` 
 - **Helmet.js** : hardened HTTP response headers
 - **Rate limiting** : 100 req/15min globally, 30 req/min on translation
 - **Zod** : input validation on all API endpoints
